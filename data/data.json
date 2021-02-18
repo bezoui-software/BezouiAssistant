@@ -1,0 +1,86 @@
+{
+  "answers": {
+    "greeting": [
+      "hi",
+      "hello",
+      "hey"
+    ],
+    "how are you": [
+      "I’m fine, thank you",
+      "I’m fine",
+      "I’m good",
+      "Pretty good",
+      "I’m well thank you for asking"
+    ],
+    "thanks": [
+      "No problem",
+      "You’re welcome",
+      "No worries",
+      "Don’t mention it",
+      "Anytime",
+      "It was the least I could do",
+      "That’s all right"
+    ],
+    "praise": [
+      "Thank you, it makes my day to hear that ❤",
+      "I really put a lot of thought into this, thank you for noticing ❤",
+      "Thank you, I really appreciate you taking the time to express that ❤",
+      "Thank you, I am happy to hear you feel that way! ❤"
+    ]
+  },
+  "questions": {
+    "greeting": "(hey|hello|hi)",
+    "how are you": "(how are you|how’s it going|how’s it going|how are you doing|what’s been going on|what's up|you all right)",
+    "thanks": "(thank you|thanks|tnx)",
+    "praise": "(you are smart|you are genius|what a genius)"
+  },
+  "orders": {
+    "what": "what",
+    "how": "how",
+    "who": "who",
+    "time": "time"
+  },
+  "orders_responds": {
+    "what": {
+      "is": {
+        "your": {
+          "name": [
+            "My name is Bezoui Assistant",
+            "Bezoui Assistant is my name",
+            "You can call me Bezoui Assistant"
+          ]
+        }
+      }
+    },
+    "who": {
+      "created": {
+        "you": [
+          "I am engineered 📏 and developed 📐 by Walid Bezoui",
+          "I am created by Walid Bezoui"
+        ]
+      }
+    },
+    "how": {
+      "you": {
+        "are": {
+          "created": [
+            "By using JS and the smartest of Walid Bezoui 😅",
+            "For more information about how am working please ask my father Walid Bezoui",
+            "It's called coding magic 🧙‍♂️🤍"
+          ]
+        }
+      }
+    },
+    "time": {
+      "now": [
+        "f%time"
+      ]
+    }
+  },
+  "commands": {
+    "f%": "function"
+  },
+  "function": {
+    "time": "() => new Date()"
+  }
+}

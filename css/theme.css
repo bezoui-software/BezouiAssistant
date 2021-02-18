@@ -1,0 +1,100 @@
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: 'Poppins', sans-serif;
+}
+
+button, input {
+  border: none;
+  outline: none;
+  height: 35px;
+  border-radius: 5px;
+  font-size: 15px;
+}
+
+button {
+  background: blue;
+  color: white;
+  width: 65px;
+  cursor: pointer;
+}
+
+input {
+  border: 1px solid #ccc;
+  padding: 5px 10px;
+  flex: 1;
+}
+
+main {
+  width: 60%;
+  margin-left: auto;
+  margin-right: auto;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  gap: 20px;
+  padding-top: 20px;
+}
+
+#conversation {
+  width: 100%;
+  word-break: break-word;
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+
+#send-message-container {
+  display: flex;
+  gap: 5px;
+  width: 100%;
+}
+
+.message {
+  padding: 5px;
+  border-radius: 5px;
+  position: relative;
+}
+
+.question {
+  align-self: flex-end;
+  background: #ccc;
+  width: fit-content;
+  color: black;
+}
+
+.question:before {
+  content: ' ';
+  position: absolute;
+  width: 0;
+  height: 0;
+  right: -5px;
+  left: auto;
+  top: 0px;
+  bottom: auto;
+  border: 5px solid;
+  border-color: #ccc transparent transparent transparent;
+  z-index: -99;
+}
+
+.answer {
+  background: blue;
+  width: fit-content;
+  color: white;
+}
+
+.answer:before {
+  content: ' ';
+  position: absolute;
+  width: 0;
+  height: 0;
+  left: -5px;
+  right: auto;
+  top: 0px;
+  bottom: auto;
+  border: 5px solid;
+  border-color: blue transparent transparent transparent;
+  z-index: -99;
+}
