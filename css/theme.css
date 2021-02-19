@@ -29,9 +29,8 @@ input {
 main {
   width: 60%;
   position: absolute;
-  left: 50%;
-  right: auto;
-  transform: translateX(-50%);
+  margin-left: auto;
+  margin-right: auto;
   display: flex;
   flex-direction: column;
   justify-content: center;
