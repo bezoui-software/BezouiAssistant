@@ -156,6 +156,7 @@
   }
 
   function evaluateQuestion(question) {
+    question = question.toLowerCase();
     let questions = getQuestions(question);
     let answers = getAnswers(questions);
     let orders = getOrders(question);
@@ -180,12 +181,16 @@
     } 
 
     function onresult(event) {
-      document.querySelector('#send-voice-question-button').innerText = 'mic';
-      let question = event.results[0][0].transcript;
       evaluateQuestion(question);
+      end();
     }
 
-    speechToText(onstart, onresult);
+    function end() {
+      document.querySelector('#send-voice-question-button').innerText = 'mic';
+      let question = event.results[0][0].transcript;
+    }
+
+    speechToText(onstart, onresult, end);
   }
 
   function displayFullAnswer(answers, orders_responds, question) {
@@ -228,14 +233,14 @@
     window.speechSynthesis.speak(msg);
   }
 
-  function speechToText(onstart, onresult) {
+  function speechToText(onstart, onresult, onend) {
     let SpeechRecognition = webkitSpeechRecognition;
     let recognition = new SpeechRecognition();
             
     // This runs when the speech recognition service starts
     recognition.onstart = onstart;
 
-    //recognition.onspeechend = onstart;
+    recognition.onspeechend = onend;
               
     // This runs when the speech recognition service returns result
     recognition.onresult = onresult;
