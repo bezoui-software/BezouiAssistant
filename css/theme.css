@@ -99,3 +99,13 @@ main {
   border-color: blue transparent transparent transparent;
   z-index: -99;
 }
+
+@media only screen and (max-width: 700px) {
+  #send-message-container {
+    flex-direction: row;
+  }
+
+  #send-message-container button {
+    width: 100%;
+  }
+}
