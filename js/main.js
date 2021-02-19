@@ -181,13 +181,13 @@
     } 
 
     function onresult(event) {
+      let question = event.results[0][0].transcript;
       evaluateQuestion(question);
       end();
     }
 
     function end() {
       document.querySelector('#send-voice-question-button').innerText = 'mic';
-      let question = event.results[0][0].transcript;
     }
 
     speechToText(onstart, onresult, end);
