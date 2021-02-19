@@ -240,7 +240,7 @@
     // This runs when the speech recognition service starts
     recognition.onstart = onstart;
 
-    recognition.onspeechend = onend;
+    recognition.onend = onend;
               
     // This runs when the speech recognition service returns result
     recognition.onresult = onresult;
