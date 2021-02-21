@@ -40,7 +40,7 @@
     "how are you": "(how are you|how’s it going|how’s it going|how are you doing|what’s been going on|what's up|you all right)",
     "thanks": "(thank you|thanks|tnx)",
     "praise": "(you are smart|you are genius|you are a genius|what a genius)",
-    "pick up line": "(pick up line|pickup line)"
+    "pick up line": "(pick up line|pickup line|/pick-up line/)"
   },
   "orders": {
     "what": "what",
