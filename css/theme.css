@@ -53,6 +53,12 @@ main {
   width: 100%;
 }
 
+#send-message-container #buttons {
+  display: flex;
+  gap: 5px;
+
+}
+
 .message {
   padding: 5px;
   border-radius: 5px;
@@ -109,7 +115,11 @@ main {
     flex-direction: column;
   }
 
+  #send-message-container #buttons {
+    flex-direction: row-reverse;
+  }
+
   #send-message-container button {
-    width: 100%;
+    flex: 1;
   }
 }
