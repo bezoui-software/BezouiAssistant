@@ -26,13 +26,21 @@
       "I really put a lot of thought into this, thank you for noticing ❤",
       "Thank you, I really appreciate you taking the time to express that ❤",
       "Thank you, I am happy to hear you feel that way! ❤"
+    ],
+    "pick up line": [
+      "I'm no photographer, but I can picture us together",
+      "Do you believe in love at first sight—or should I walk by again?",
+      "I must be in a museum, because you truly are a work of art",
+      "I must be a snowflake, because I've fallen for you",
+      "Something’s wrong with my eyes because I can’t take them off you"
     ]
   },
   "questions": {
     "greeting": "(hey|hello|hi)",
     "how are you": "(how are you|how’s it going|how’s it going|how are you doing|what’s been going on|what's up|you all right)",
     "thanks": "(thank you|thanks|tnx)",
-    "praise": "(you are smart|you are genius|you are a genius|what a genius)"
+    "praise": "(you are smart|you are genius|you are a genius|what a genius)",
+    "pick up line": "(pick up line|pickup line)"
   },
   "orders": {
     "what": "what",
