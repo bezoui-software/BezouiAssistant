@@ -109,7 +109,7 @@ main {
 @media only screen and (max-width: 800px) {
   main {
     width: 100vw;
-    padding: 5px;
+    padding: 8px;
   }
   #send-message-container {
     flex-direction: column;
