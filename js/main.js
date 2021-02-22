@@ -14,36 +14,38 @@
   }
 
   function getOrderPath(orderName, order, path = [orderName]) {
-    let orderExpressions = DATA.orders_responds[path[0]];
+    let orderExpressions = getOrderExpressions(path);
 
-    if (path.length > 1) {
-      for (let i = 1; i < path.length; i++) {
-        let expression = path[i];
-        orderExpressions = orderExpressions[expression];
-      }
-    }
-
-    if (typeof orderExpressions == "object") {
-      for (let expressionName of Object.keys(orderExpressions)) {
-        let match = order.match(new RegExp(expressionName));
-        if (match) {
-          let expression = orderExpressions[expressionName];
-          if (typeof expression == "object") {
-            let match = getMatch(order, expression) || getMatch(order, expressionName);
-            if (match) {
-              order = order.slice(match.index + match[0].length, order.length);
-              path.push(expressionName);
-              if (expressionName != match[0]) {
-                path.push(match[0]);
-              }
-              return getOrderPath(expressionName, order, path);
-            }
-          }
-        }
-      }
+    if (isObject(orderExpressions)) {
+      let match = getMatch(order, orderExpressions);
+      if (match) {
+        order = getOrderFromMatch(order, match);
+        path.push(match[0]);
+        path = getOrderPath(orderName, order, path);
+      } 
     }
 
     return path;
+  }
+
+  function getOrderExpressions(path) {
+    let orderExpressions;
+    for (let expressionName of path) {
+      if (orderExpressions) {
+        orderExpressions = orderExpressions[expressionName];  
+      } else {
+        orderExpressions = DATA.orders_responds[expressionName];  
+      }
+    } 
+    return orderExpressions;
+  }
+
+  function getOrderFromMatch(order, match) {
+    return order.slice(match.index  + match[0].length, order.length);
+  }
+
+  function isObject(a) {
+    return typeof a == 'object';
   }
 
   function getMatch(txt, expressions) {
@@ -63,9 +65,9 @@
     if (txt) {
       for (let expressionName of Object.keys(DATA.orders)) {
         let expression = new RegExp(DATA.orders[expressionName]);
-        let cmd = txt.match(expression);
-        if (cmd) {
-          let order = txt.slice(cmd.index + cmd[0].length, txt.length);
+        let match = txt.match(expression);
+        if (match) {
+          let order = getOrderFromMatch(txt, match);
           results[expressionName] = order;
         }
       }
@@ -110,7 +112,7 @@
         let command = DATA.commands[commandName];
         let match = ordersResponds[i].match(new RegExp(commandName));
         if (match) {
-          let option = ordersResponds[i].slice(match.index + match[0].length, ordersResponds[i].lenght);
+          let option = getOrderFromMatch(ordersResponds[i], match);
           let commandeDataName = DATA.commands[match[0]];
           let commandeData = DATA[commandeDataName];
           ordersResponds[i] = eval(commandeData[option])();
