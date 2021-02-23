@@ -15,7 +15,7 @@
   }
 
   function getOrderPath(orderName, order, path = [orderName]) {
-    let orderExpressions = getResultsFromPath(path);
+    let orderExpressions = getOrdersRespondsFromPath(path);
 
     if (isObject(orderExpressions)) {
       let match = getMatch(order, orderExpressions);
@@ -75,8 +75,10 @@
   function getOrdersResponds(orders) {
     let ordersResponds = [];
     for (let orderName of Object.keys(orders)) {
-      let orderResponds = getOrderRespond(orderName, orders[orderName]) || [];
-      ordersResponds.push(orderResponds);
+      let orderResponds = getOrderRespond(orderName, orders[orderName]);
+      if (orderResponds) {
+        ordersResponds.push(orderResponds);
+      }
     }
     return ordersResponds;
   }
@@ -86,17 +88,17 @@
     let match  = getMatch(orderName, DATA.orders_responds);
     if (match) {
       let orderPath = getOrderPath(match[0], order); 
-      orderResponds =  getResultsFromPath(orderPath);
+      orderResponds =  getOrdersRespondsFromPath(orderPath);
     }
     let orderRespond = randomElementFromArray(orderResponds);
     return orderRespond;
   }
 
-  function getResultsFromPath(path) {
+  function getOrdersRespondsFromPath(path) {
     let results;
     for (let expressionName of path) {
       if (results) {
-        results = orderResponds[expressionName];
+        results = results[expressionName];
       } else {
         results = DATA.orders_responds[expressionName];     
       }
