@@ -1,6 +1,6 @@
 (function() {
   "use strict"
-  let DATA_URL = 'BezouiAssistant/data/data.json';
+  let DATA_URL = '/BezouiAssistant/data/data.json';
   let DATA = {};
 
   function getQuestions(txt) {
