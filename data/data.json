@@ -46,7 +46,8 @@
     "what": "what",
     "how": "how",
     "who": "who",
-    "time": "time"
+    "time now": "time now", 
+    "abc": "abc"
   },
   "orders_responds": {
     "what": {
@@ -79,11 +80,7 @@
         }
       }
     },
-    "time": {
-      "now": [
-        "f%time"
-      ]
-    }
+    "time now": ["f%time"]
   },
   "commands": {
     "f%": "function"
