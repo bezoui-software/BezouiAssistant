@@ -1,5 +1,6 @@
 (function() {
   "use strict"
+  let DATA_URL = 'data/data.json';
   let DATA = {};
 
   function getQuestions(txt) {
@@ -14,7 +15,7 @@
   }
 
   function getOrderPath(orderName, order, path = [orderName]) {
-    let orderExpressions = getOrderExpressions(path);
+    let orderExpressions = getResultsFromPath(path);
 
     if (isObject(orderExpressions)) {
       let match = getMatch(order, orderExpressions);
@@ -23,21 +24,15 @@
         path.push(match[0]);
         path = getOrderPath(orderName, order, path);
       } 
+    } else {
+      let match = getMatch(order, orderName);
+      if (match) {
+        order = getOrderFromMatch(order, match);
+        path.push(match[0]);
+      } 
     }
 
     return path;
-  }
-
-  function getOrderExpressions(path) {
-    let orderExpressions;
-    for (let expressionName of path) {
-      if (orderExpressions) {
-        orderExpressions = orderExpressions[expressionName];  
-      } else {
-        orderExpressions = DATA.orders_responds[expressionName];  
-      }
-    } 
-    return orderExpressions;
   }
 
   function getOrderFromMatch(order, match) {
@@ -52,7 +47,9 @@
     if (typeof expressions == "object") {
       for (let expressionName of Object.keys(expressions)) {
         let match = txt.match(new RegExp(expressionName));
-        return match;
+        if (match) {
+          return match;
+        }
       }
     } else {
       let match = txt.match(new RegExp(expressions));
@@ -76,46 +73,47 @@
   }
 
   function getOrdersResponds(orders) {
-    let results = [];
+    let ordersResponds = [];
     for (let orderName of Object.keys(orders)) {
-      if (orders[orderName]) {
-        let order = getOrderRespond(orderName, orders[orderName]);
-        if (order) {
-          results.push(order);
-        }
+      let orderResponds = getOrderRespond(orderName, orders[orderName]) || [];
+      ordersResponds.push(orderResponds);
+    }
+    return ordersResponds;
+  }
+
+  function getOrderRespond(orderName, order) {
+    let orderResponds;
+    let match  = getMatch(orderName, DATA.orders_responds);
+    if (match) {
+      let orderPath = getOrderPath(match[0], order); 
+      orderResponds =  getResultsFromPath(orderPath);
+    }
+    let orderRespond = randomElementFromArray(orderResponds);
+    return orderRespond;
+  }
+
+  function getResultsFromPath(path) {
+    let results;
+    for (let expressionName of path) {
+      if (results) {
+        results = orderResponds[expressionName];
+      } else {
+        results = DATA.orders_responds[expressionName];     
       }
     }
     return results;
   }
 
-  function getOrderRespond(orderName, order) {
-    for (let order_respond_name of Object.keys(DATA.orders_responds[orderName])) {
-      let match = order.match(new RegExp(order_respond_name));
-      let order_responds;
-      if (match) {
-        let order_path = getOrderPath(orderName, order);
-        if (order_path.length > 0) {
-          order_responds = DATA.orders_responds[order_path[0]];
-          for (let i = 1; i < order_path.length; i++) {
-            let expression = order_path[i];
-            order_responds = order_responds[expression];
-          }
-          return randomElementFromArray(order_responds);
-        }
-      }
-    }
-  }
-
   function evaluateOrdersResponds(ordersResponds) {
-    for (let i = 0; i < ordersResponds.length; i++) {
+    for (let i=0; i<ordersResponds.length; i++) {
       for (let commandName of Object.keys(DATA.commands)) {
         let command = DATA.commands[commandName];
-        let match = ordersResponds[i].match(new RegExp(commandName));
+        let match = getMatch(ordersResponds[i], commandName);
         if (match) {
           let option = getOrderFromMatch(ordersResponds[i], match);
-          let commandeDataName = DATA.commands[match[0]];
-          let commandeData = DATA[commandeDataName];
-          ordersResponds[i] = eval(commandeData[option])();
+          let commandDataName = DATA.commands[match[0]];
+          let commandData = DATA[commandDataName];
+          ordersResponds[i] = eval(commandData[option])();
         }
       }
     }
@@ -164,7 +162,7 @@
     let orders = getOrders(question);
     let orders_responds = getOrdersResponds(orders);
     orders_responds = evaluateOrdersResponds(orders_responds);
-    displayFullAnswer(answers, orders_responds, question);
+    renderConversation(answers, orders_responds, question);
     return {answers, orders_responds};
   }
 
@@ -195,34 +193,34 @@
     speechToText(onstart, onresult, end);
   }
 
-  function displayFullAnswer(answers, orders_responds, question) {
-    let full_answer = '';
+  function renderConversation(answers, orders_responds, question) {
+    let answer = '';
 
     if (orders_responds.length > 0) {
-      full_answer = `${orders_responds.join(', ')}.`;
+      answer = `${orders_responds.join(', ')}.`;
     } else if (answers.length > 0) {
-      full_answer = `${answers.join(', ')}.`;
+      answer = `${answers.join(', ')}.`;
+    } else {
+      answer = "Sorry I didn't understand what do you mean";
     }
 
+    textToSpeech(answer);
+    renderQuestion(question);
+    renderAnswer(answer);
+  }
+
+  function renderQuestion(question) {
     let question_elem = document.createElement('div');
     question_elem.classList.add('question', 'message');
     question_elem.innerHTML = question;
     document.querySelector('#conversation').appendChild(question_elem);
+  }
 
-    if (full_answer.length > 0) {
-      textToSpeech(full_answer);
-      let full_answer_elem = document.createElement('div');
-      full_answer_elem.classList.add('answer', 'message');
-      full_answer_elem.innerHTML = full_answer;
-      document.querySelector('#conversation').appendChild(full_answer_elem);
-    } else {
-      full_answer = "Sorry I didn't understand what do you mean";
-      textToSpeech(full_answer);
-      let full_answer_elem = document.createElement('div');
-      full_answer_elem.classList.add('answer', 'message');
-      full_answer_elem.innerHTML = full_answer;
-      document.querySelector('#conversation').appendChild(full_answer_elem);
-    }
+  function renderAnswer(answer) {
+    let answer_elem = document.createElement('div');
+    answer_elem.classList.add('answer', 'message');
+    answer_elem.innerHTML = answer;
+    document.querySelector('#conversation').appendChild(answer_elem);
   }
 
   function clearInput() {
@@ -238,40 +236,25 @@
   function speechToText(onstart, onresult, onend) {
     let SpeechRecognition = webkitSpeechRecognition;
     let recognition = new SpeechRecognition();
+    recognition.lang = 'en-US';
             
-    // This runs when the speech recognition service starts
     recognition.onstart = onstart;
-
     recognition.onend = onend;
-              
-    // This runs when the speech recognition service returns result
+    recognition.onerror = onend;
     recognition.onresult = onresult;
               
-    // start recognition
    recognition.start();
  }
 
  async function run() {
-    await fetch('data/data.json').then(dataLoaded);
+    await fetch(DATA_URL).then(dataLoaded);
 
     async function dataLoaded(data) {
-      data = await data.json();
-      DATA = data;
+      DATA = await data.json();
       setup();
     }
 
-    function setupServiceWorker() {
-      if ('serviceWorker' in navigator) {
-        navigator.serviceWorker.register('/BezouiAssistant/sw.js').then(function(registration) {
-          console.log('ServiceWorker registration successful with scope: ', registration.scope);
-        }, function(err) {
-          console.log('ServiceWorker registration failed: ', err);
-        });
-      }
-    }
-
-    function setup() {
-      setupServiceWorker();
+    function setupEvents() {
       document.querySelector('#send-question-button').addEventListener('click', evaluateUserQuestion);
       document.querySelector('#send-voice-question-button').addEventListener('click', evaluateUserVoiceQuestion);
       window.addEventListener('keypress', e => {
@@ -283,6 +266,21 @@
             break;
         }
       })
+    }
+
+    function setupServiceWorker() {
+      if ('serviceWorker' in navigator) {
+        navigator.serviceWorker.register('../sw.js').then(function(registration) {
+          console.log('ServiceWorker registration successful with scope: ', registration.scope);
+        }, function(err) {
+          console.log('ServiceWorker registration failed: ', err);
+        });
+      }
+    }
+
+    function setup() {
+      setupEvents();
+      setupServiceWorker();
     }
   }
 
