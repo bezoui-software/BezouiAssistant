@@ -1,6 +1,6 @@
 var CACHE_NAME = 'bezoui-assistant-cache-v1';
 var urlsToCache = [
-  '/BezouiAssistant/',
+  '/BezouiAssistant',
   '/BezouiAssistant/index.html',
   '/BezouiAssistant/js/main.js',
   '/BezouiAssistant/css/theme.css',
