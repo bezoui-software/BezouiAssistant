@@ -82,6 +82,7 @@
     },
     "time now": ["f%time"]
   },
+  "bad_words": "(fuck|bitch|ass|cow|damn|arsehole|asshole|bullshit|pussy)",
   "commands": {
     "f%": "function"
   },
