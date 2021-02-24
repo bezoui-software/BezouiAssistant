@@ -3,6 +3,10 @@
   let DATA_URL = 'data/data.json';
   let DATA = {};
   let TEXT_TO_SPEECH_VOICE;
+  let ERRORS = {
+    "NO_ANSWER": "Sorry, I didn't understand what do you mean !",
+    "CONTAIN_BAD_WORDS": "Your question contain some bad words, I can't answer it !"
+  };
 
   function getQuestions(txt) {
     let results = {};
@@ -164,13 +168,26 @@
 
   function evaluateQuestion(question) {
     question = question.toLowerCase();
-    let questions = getQuestions(question);
-    let answers = getAnswers(questions);
-    let orders = getOrders(question);
-    let orders_responds = getOrdersResponds(orders);
-    orders_responds = evaluateOrdersResponds(orders_responds);
+
+    let answers = [], orders_responds = [];
+    if (!isConatainBadWords(question)) {
+      let questions = getQuestions(question);
+      let orders = getOrders(question);
+      answers = getAnswers(questions);
+      orders_responds = getOrdersResponds(orders);
+      orders_responds = evaluateOrdersResponds(orders_responds);
+    } else {
+      answers.push(ERRORS.CONTAIN_BAD_WORDS);
+    }
+
     renderConversation(answers, orders_responds, question);
     return {answers, orders_responds};
+  }
+ 
+  function isConatainBadWords(txt) {
+    let badWordsRegExp = new RegExp(DATA.bad_words);
+    let match = txt.match(badWordsRegExp); 
+    return match;
   }
 
   function evaluateUserQuestion() {
@@ -207,7 +224,7 @@
         answers.push(orderRespond.respond);   
       }     
     } else if (answers.length == 0) {
-      answers.push("Sorry, I didn't understand what do you mean !");
+      answers.push(ERRORS.NO_ANSWER);
     }
 
     renderQuestion(question);     
@@ -294,7 +311,7 @@
 
     function setupServiceWorker() {
       if ('serviceWorker' in navigator) {
-        navigator.serviceWorker.register('/BezouiAssistant/sw.js').then(function(registration) {
+        navigator.serviceWorker.register('../sw.js').then(function(registration) {
           console.log('ServiceWorker registration successful with scope: ', registration.scope);
         }, function(err) {
           console.log('ServiceWorker registration failed: ', err);
