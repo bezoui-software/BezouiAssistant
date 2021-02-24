@@ -85,14 +85,16 @@
   }
 
   function getOrderRespond(orderName, order) {
-    let orderResponds;
+    let orderResponds, orderPath;
     let match  = getMatch(orderName, DATA.orders_responds);
     if (match) {
-      let orderPath = getOrderPath(match[0], order); 
+      orderPath = getOrderPath(match[0], order); 
       orderResponds =  getOrdersRespondsFromPath(orderPath);
     }
     let orderRespond = randomElementFromArray(orderResponds);
-    return orderRespond;
+    if (orderRespond) {
+      return {respond: orderRespond, match, path: orderPath};
+    }
   }
 
   function getOrdersRespondsFromPath(path) {
@@ -108,15 +110,17 @@
   }
 
   function evaluateOrdersResponds(ordersResponds) {
+    if (!ordersResponds) return;
+
     for (let i=0; i<ordersResponds.length; i++) {
       for (let commandName of Object.keys(DATA.commands)) {
         let command = DATA.commands[commandName];
-        let match = getMatch(ordersResponds[i], commandName);
+        let match = getMatch(ordersResponds[i].respond, commandName);
         if (match) {
-          let option = getOrderFromMatch(ordersResponds[i], match);
+          let option = getOrderFromMatch(ordersResponds[i].respond, match);
           let commandDataName = DATA.commands[match[0]];
           let commandData = DATA[commandDataName];
-          ordersResponds[i] = eval(commandData[option])();
+          ordersResponds[i].respond = eval(commandData[option])();
         }
       }
     }
@@ -196,20 +200,18 @@
     speechToText(onstart, onresult, end);
   }
 
-  function renderConversation(answers, orders_responds, question) {
-    let answer = '';
-
-    if (orders_responds.length > 0) {
-      answer = `${orders_responds.join(', ')}.`;
-    } else if (answers.length > 0) {
-      answer = `${answers.join(', ')}.`;
-    } else {
-      answer = "Sorry I didn't understand what do you mean";
+  function renderConversation(answers, ordersResponds, question) {
+    if (ordersResponds.length > 0) {
+      answers = []; 
+      for (let orderRespond of ordersResponds) {
+        answers.push(orderRespond.respond);   
+      }     
+    } else if (answers.length == 0) {
+      answers.push("Sorry, I didn't understand what do you mean !");
     }
 
-    textToSpeech(answer);
-    renderQuestion(question);
-    renderAnswer(answer);
+    renderQuestion(question);     
+    renderAnswers(answers);
   }
 
   function renderQuestion(question) {
@@ -217,6 +219,13 @@
     question_elem.classList.add('question', 'message');
     question_elem.innerHTML = question;
     document.querySelector('#conversation').appendChild(question_elem);
+  }
+
+  function renderAnswers(answers) {
+    for (let answer of answers) {
+      textToSpeech(answer);
+      renderAnswer(answer);        
+    }
   }
 
   function renderAnswer(answer) {
@@ -234,7 +243,9 @@
     let msg = new SpeechSynthesisUtterance();
     msg.text = text;
     msg.lang = 'eng-US';
-    msg.pitch = 0.8;
+    msg.pitch = 1;
+    msg.volume = 1;
+    msg.rate = 1;
     if (TEXT_TO_SPEECH_VOICE) {
       msg.voice = TEXT_TO_SPEECH_VOICE;
     }
@@ -244,8 +255,6 @@
   function updateTextToSpeechVoice() {
     let textToSpeechVoices = speechSynthesis.getVoices();
     TEXT_TO_SPEECH_VOICE = textToSpeechVoices[3];
-    console.log(TEXT_TO_SPEECH_VOICE);
-    //TEXT_TO_SPEECH_VOICE = randomElementFromArray(textToSpeechVoices);
   }
 
   function speechToText(onstart, onresult, onend) {
@@ -285,7 +294,7 @@
 
     function setupServiceWorker() {
       if ('serviceWorker' in navigator) {
-        navigator.serviceWorker.register('BezouiAssistant/../sw.js').then(function(registration) {
+        navigator.serviceWorker.register('/BezouiAssistant/sw.js').then(function(registration) {
           console.log('ServiceWorker registration successful with scope: ', registration.scope);
         }, function(err) {
           console.log('ServiceWorker registration failed: ', err);
