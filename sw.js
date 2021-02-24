@@ -1,9 +1,9 @@
 var CACHE_NAME = 'bezoui-assistant-cache-v1';
 var urlsToCache = [
-  'BezouiAssistant/',
-  'BezouiAssistant/index.html',
-  'BezouiAssistant/js/main.js',
-  'BezouiAssistant/css/theme.css',
+  '/',
+  'index.html',
+  'js/main.js',
+  'css/theme.css',
   'https://fonts.googleapis.com/css2?family=Poppins:wght@100;300;400;500;600;700&display=swap',
   'https://fonts.googleapis.com/icon?family=Material+Icons'
 ];
