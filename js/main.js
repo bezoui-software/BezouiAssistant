@@ -1,7 +1,8 @@
 (function() {
   "use strict"
-  let DATA_URL = '/BezouiAssistant/data/data.json';
+  let DATA_URL = 'data/data.json';
   let DATA = {};
+  let TEXT_TO_SPEECH_VOICE;
 
   function getQuestions(txt) {
     let results = {};
@@ -230,9 +231,21 @@
   }
 
   function textToSpeech(text) {
-    var msg = new SpeechSynthesisUtterance();
+    let msg = new SpeechSynthesisUtterance();
     msg.text = text;
+    msg.lang = 'eng-US';
+    msg.pitch = 0.8;
+    if (TEXT_TO_SPEECH_VOICE) {
+      msg.voice = TEXT_TO_SPEECH_VOICE;
+    }
     window.speechSynthesis.speak(msg);
+  }
+
+  function updateTextToSpeechVoice() {
+    let textToSpeechVoices = speechSynthesis.getVoices();
+    TEXT_TO_SPEECH_VOICE = textToSpeechVoices[3];
+    console.log(TEXT_TO_SPEECH_VOICE);
+    //TEXT_TO_SPEECH_VOICE = randomElementFromArray(textToSpeechVoices);
   }
 
   function speechToText(onstart, onresult, onend) {
@@ -257,22 +270,22 @@
     }
 
     function setupEvents() {
+      const keyPressEvents = {13: evaluateUserQuestion}
       document.querySelector('#send-question-button').addEventListener('click', evaluateUserQuestion);
       document.querySelector('#send-voice-question-button').addEventListener('click', evaluateUserVoiceQuestion);
       window.addEventListener('keypress', e => {
         const { keyCode } = e;
-      
-        switch (keyCode) {
-          case 13: 
-            evaluateUserQuestion();
-            break;
+        const func = keyPressEvents[keyCode];
+        if (func) {
+          func();
         }
       })
+      speechSynthesis.onvoiceschanged = updateTextToSpeechVoice;
     }
 
     function setupServiceWorker() {
       if ('serviceWorker' in navigator) {
-        navigator.serviceWorker.register('sw.js').then(function(registration) {
+        navigator.serviceWorker.register('../sw.js').then(function(registration) {
           console.log('ServiceWorker registration successful with scope: ', registration.scope);
         }, function(err) {
           console.log('ServiceWorker registration failed: ', err);
